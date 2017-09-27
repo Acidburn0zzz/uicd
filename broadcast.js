@@ -2,18 +2,34 @@ var pg = require('pg')
 
 // Constructor
 function Broadcast() {}
+
 // class methods
 Broadcast.prototype.create = function(site, message) {
 
-    var urlToUse = null;
-    if (site === 'org') {
-        urlToUse = process.env.ORG_DATABASE_URL;
-    } else if (site === 'com') {
-        urlToUse = process.env.COM_DATABASE_URL;
-    } else {
-        throw "Unknow site value (shoulg be org or com)!"
+    function getDbDate(date) {
+        var dateString = date.getFullYear() + "-" + ('0' + (date.getMonth() + 1)).slice(-2) + "-" + ('0' + date.getDate()).slice(-2) + " " + ('0' + date.getHours()).slice(-2) + ":" + ('0' + date.getMinutes()).slice(-2) + ":" + ('0' + date.getSeconds()).slice(-2);
+        return dateString;
     }
-    var client = new pg.Client(urlToUse);
+
+    function getDbQuery(date, message) {
+        return "INSERT INTO broadcasts (created_at, updated_at, message, category) VALUES (\'" + date + "\', \'" + date + "\', \'" + message + "\', 'announcement')";
+    }
+
+    function getDbUrl(site) {
+        var urlToUse = null;
+        if (site === 'org') {
+            urlToUse = process.env.ORG_DATABASE_URL;
+        } else if (site === 'com') {
+            urlToUse = process.env.COM_DATABASE_URL;
+        } else {
+            throw "Unknown site value (should be org or com)!"
+        }
+        return urlToUse;
+    }
+
+    var dbUrl = getDbUrl(site);
+
+    var client = new pg.Client(dbUrl);
     client.connect(function(err) {
         if (err) {
             console.error('connection error', err.stack)
@@ -22,11 +38,10 @@ Broadcast.prototype.create = function(site, message) {
         }
     });
 
-    var now = new Date();
-    var nowString = now.getFullYear() + "-" + ('0' + (now.getMonth() + 1)).slice(-2) + "-" + ('0' + now.getDate()).slice(-2) + " " + ('0' + now.getHours()).slice(-2) + ":" + ('0' + now.getMinutes()).slice(-2) + ":" + ('0' + now.getSeconds()).slice(-2);
-    var query = "INSERT INTO broadcasts (created_at, updated_at, message, category) VALUES (\'" + nowString + "\', \'" + nowString + "\', \'" + message + "\', 'announcement')";
+    var dbDate = getDbDate(new Date());
+    var dbQuery = getDbQuery(dbDate, message);
 
-    client.query(query, function(err, res) {
+    client.query(dbQuery, function(err, res) {
         if (err) throw err
         console.log(res)
         client.end()
