@@ -28,33 +28,23 @@ app.post("/broadcasts", function(request, response) {
 
 app.get("/incidents", function(request, response) {
 
-    var page_id = process.env.STATUSPAGE_PAGE_ID;
-    var api_key = process.env.STATUSPAGE_API_KEY;
-    var host = "api.statuspage.io";
-    var incident_url = "https://" + host + "/pages/" + page_id + "/incidents.json";
-
     var StatusPageAPI = require('statuspage-api');
 
     var statuspage = new StatusPageAPI({
         pageid: process.env.STATUSPAGE_PAGE_ID,
         apikey: process.env.STATUSPAGE_API_KEY,
-        host: "api.statuspage.io", // Override the default host
-        port: 443, // Override the default port
-        // useragent: "statuspage-node",  // Override the default useragent
         debuglevel: "warn" // Set debug levele: debug, info, warn, error
     });
 
     var printIncidentTitle = function(result) {
-        console.log("Status: ", result.status);
         if (result.error != null) {
             console.log("Error: ", result.error);
         }
         var incidents = [];
         if (result.status == "success") {
             for (var i = 0; i < result.data.length; i++) {
-                console.log(result.data[i].status);
                 if (result.data[i].status !== 'resolved') {
-                    incidents.push(result.data[i].name);
+                    incidents.push({ id: result.data[i].id, name: result.data[i].name });
                 }
             }
             response.json(incidents);
