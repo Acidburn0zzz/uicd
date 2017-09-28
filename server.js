@@ -10,7 +10,7 @@ var app = express();
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 console.log('ENV =============> ', process.env.UICD_ENV);
-var dbFile = (process.env.UICD_ENV === 'staging') ? "./tmp/db.json" : ".data/db.json";
+var dbFile = (process.env.UICD_ENV === 'staging') ? "/tmp/db.json" : ".data/db.json";
 const adapter = new FileSync(dbFile);
 const db = low(adapter);
 
