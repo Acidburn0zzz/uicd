@@ -7,11 +7,12 @@ var Broadcast = require('./broadcast')
 
 var app = express();
 
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
 
-const adapter = new FileSync('.data/db.json')
-const db = low(adapter)
+var dbFile = (process.env.ENV === 'staging') ? "./tmp/db.json" : ".data/db.json";
+const adapter = new FileSync(dbFile);
+const db = low(adapter);
 
 // Set some defaults
 // Note: "ibp" is for "Incident Broadcast Pair". Happy to change it to something else. :)
