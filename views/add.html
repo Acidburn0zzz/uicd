@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>UICD - Main</title>
+    <title>UICD - Add Broadcast</title>
     <meta name="description" content="UICD">
     <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon">
     <meta charset="utf-8">
@@ -21,18 +21,32 @@
   <body>
     <header>
       <h1>
-          Current Incidents:
+        Add a Broadcast:
       </h1>
     </header>
-    <section>
-        <!-- the content is populated through /client.incidents.js, from statuspage.io -->
-    </section>
+
+    <main>
+      <form action="/new_broadcast" method="get">
+        <div>
+            <label for="message">What message do you want to broadcast?</label>
+            <input type="text" name="message" id="message" value="Open the bay doors.">
+        </div>
+        <div>
+            <label for="site">Which site?</label>
+            <input type="text" name="site" id="site" value="com">
+        </div>
+        <div>>
+            <button type="submit">Submit</button>
+        </div>
+      </form>
+    </main>
+
 
     <!-- Your web-app is https, so your scripts need to be too -->
     <script src="https://code.jquery.com/jquery-2.2.1.min.js"
             integrity="sha256-gvQgAFzTH6trSrAWoH1iPo9Xc96QxSZ3feW6kem+O00="
             crossorigin="anonymous"></script>
     <script src="/client.js"></script>
-    <script src="/client.incidents.js"></script>
+
   </body>
 </html>

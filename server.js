@@ -44,7 +44,7 @@ app.get("/incidents", function(request, response) {
         if (result.status == "success") {
             for (var i = 0; i < result.data.length; i++) {
                 if (result.data[i].status !== 'resolved') {
-                    incidents.push({ id: result.data[i].id, name: result.data[i].name });
+                    incidents.push({ name: result.data[i].name, created_at: result.data[i].created_at, updated_at: result.data[i].updated_at  });
                 }
             }
             response.json(incidents);
@@ -55,6 +55,18 @@ app.get("/incidents", function(request, response) {
 
 });
 
+app.get("/add", function(request, response){
+    response.sendFile(__dirname + '/views/add.html');
+})
+
+app.get("/new_broadcast", function(request,response) {
+    // ?broadcast_message=two&site=three.com
+    var q = request.query;
+    var message = q.message;
+    var site = q.site;
+
+    response.send([message, site]);
+})
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
