@@ -18,6 +18,11 @@ h1 {
   color: pink;
 }
 
+h3 {
+  font-weight: bold;
+  color: pink;
+}
+
 .bold {
   font-weight: bold;
 }
@@ -64,7 +69,12 @@ button:active {
 }
 
 li {
-  margin-bottom: 5px;
+    list-style-position: inside;
+    left: 80px;
+}
+.li-content {
+    position: absolute;
+    left: 180px;
 }
 
 footer {
