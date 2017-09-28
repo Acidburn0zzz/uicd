@@ -53,6 +53,11 @@ app.get("/incidents", function(request, response) {
         debuglevel: "warn" // Set debug levele: debug, info, warn, error
     });
 
+    function isIncidentOpen(status) {
+        return (status !== 'resolved');
+        // return ((status !== 'resolved') && (status !== 'completed') && (status !== 'postmortem'));
+    }
+
     var printIncidentTitle = function(result) {
         if (result.error != null) {
             console.log("Error: ", result.error);
@@ -60,18 +65,16 @@ app.get("/incidents", function(request, response) {
         var incidents = [];
         if (result.status == "success") {
             for (var i = 0; i < result.data.length; i++) {
-                if (result.data[i].status !== 'resolved') {
+                if (isIncidentOpen(result.data[i].status)) {
                     incidents.push({ id: result.data[i].id, name: result.data[i].name });
                 }
+                response.json(incidents);
             }
-            response.json(incidents);
         }
+
+        statuspage.get("incidents", printIncidentTitle);
     }
-
-    statuspage.get("incidents", printIncidentTitle);
-
 });
-
 
 // listen for requests :)
 var listener = app.listen(process.env.PORT, function() {
