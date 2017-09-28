@@ -7,11 +7,12 @@ var Broadcast = require('./broadcast')
 
 var app = express();
 
-const low = require('lowdb')
-const FileSync = require('lowdb/adapters/FileSync')
-
-const adapter = new FileSync('.data/db.json')
-const db = low(adapter)
+const low = require('lowdb');
+const FileSync = require('lowdb/adapters/FileSync');
+console.log('ENV =============> ', process.env.UICD_ENV);
+var dbFile = (process.env.UICD_ENV === 'staging') ? "/tmp/db.json" : ".data/db.json";
+const adapter = new FileSync(dbFile);
+const db = low(adapter);
 
 // Set some defaults
 // Note: "ibp" is for "Incident Broadcast Pair". Happy to change it to something else. :)
@@ -59,7 +60,6 @@ app.get("/incidents", function(request, response) {
     }
 
     var printIncidentTitle = function(result) {
-        console.log("In printIncidentTitle()")
         if (result.error != null) {
             console.log("Error: ", result.error);
         }
@@ -70,8 +70,8 @@ app.get("/incidents", function(request, response) {
                     incidents.push({ name: result.data[i].name, created_at: result.data[i].created_at, updated_at: result.data[i].updated_at });
                 }
             }
-            response.json(incidents);
         }
+        response.json(incidents);
     }
 
     statuspage.get("incidents", printIncidentTitle);
