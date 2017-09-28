@@ -44,7 +44,7 @@ app.post("/broadcasts", function(request, response) {
 });
 
 app.get("/incidents", function(request, response) {
-
+    console.log("In /incidents");
     var StatusPageAPI = require('statuspage-api');
 
     var statuspage = new StatusPageAPI({
@@ -59,6 +59,7 @@ app.get("/incidents", function(request, response) {
     }
 
     var printIncidentTitle = function(result) {
+        console.log("In printIncidentTitle()")
         if (result.error != null) {
             console.log("Error: ", result.error);
         }
@@ -66,21 +67,21 @@ app.get("/incidents", function(request, response) {
         if (result.status == "success") {
             for (var i = 0; i < result.data.length; i++) {
                 if (isIncidentOpen(result.data[i].status)) {
-                    incidents.push({ name: result.data[i].name, created_at: result.data[i].created_at, updated_at: result.data[i].updated_at  });
+                    incidents.push({ name: result.data[i].name, created_at: result.data[i].created_at, updated_at: result.data[i].updated_at });
                 }
-                response.json(incidents);
             }
+            response.json(incidents);
         }
-
-        statuspage.get("incidents", printIncidentTitle);
     }
+
+    statuspage.get("incidents", printIncidentTitle);
 });
 
-app.get("/add", function(request, response){
+app.get("/add", function(request, response) {
     response.sendFile(__dirname + '/views/add.html');
 })
 
-app.get("/new_broadcast", function(request,response) {
+app.get("/new_broadcast", function(request, response) {
     // ?broadcast_message=two&site=three.com
     var q = request.query;
     var message = q.message;
