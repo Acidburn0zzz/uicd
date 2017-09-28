@@ -45,7 +45,6 @@ Broadcast.prototype.create = function(site, message) {
         .then(
             function(result, error) {
                 if (error) throw error;
-                console.log(result.rows[0].id);
                 client.end();
                 return result.rows[0].id;
             });

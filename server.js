@@ -7,6 +7,17 @@ var Broadcast = require('./broadcast')
 
 var app = express();
 
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+
+const adapter = new FileSync('.data/db.json')
+const db = low(adapter)
+
+// Set some defaults
+// Note: "ibp" is for "Incident Broadcast Pair". Happy to change it to something else. :)
+db.defaults({ ibp: [] })
+    .write();
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
@@ -23,8 +34,10 @@ app.post("/broadcasts", function(request, response) {
 
     var broadcast = new Broadcast();
     broadcast.create(request.query.site, request.query.message)
-        .then(function(id) {
-            console.log("ID = ", id);
+        .then(function(bid) {
+            db.get('ibp')
+                .push({ iid: request.query.iid, bid: bid })
+                .write();
         });
 
     response.sendStatus(200);
