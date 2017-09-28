@@ -12,7 +12,7 @@ Broadcast.prototype.create = function(site, message) {
     }
 
     function getDbQuery(date, message) {
-        return "INSERT INTO broadcasts (created_at, updated_at, message, category) VALUES (\'" + date + "\', \'" + date + "\', \'" + message + "\', 'announcement')";
+        return "INSERT INTO broadcasts (created_at, updated_at, message, category) VALUES (\'" + date + "\', \'" + date + "\', \'" + message + "\', 'announcement') RETURNING id";
     }
 
     function getDbUrl(site) {
@@ -41,11 +41,14 @@ Broadcast.prototype.create = function(site, message) {
     var dbDate = getDbDate(new Date());
     var dbQuery = getDbQuery(dbDate, message);
 
-    client.query(dbQuery, function(err, res) {
-        if (err) throw err
-        console.log(res)
-        client.end()
-    });
+    return client.query(dbQuery)
+        .then(
+            function(result, error) {
+                if (error) throw error;
+                console.log(result.rows[0].id);
+                client.end();
+                return result.rows[0].id;
+            });
 };
 
 // export the class

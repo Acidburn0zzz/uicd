@@ -22,7 +22,11 @@ app.post("/broadcasts", function(request, response) {
     }
 
     var broadcast = new Broadcast();
-    broadcast.create(request.query.site, request.query.message);
+    broadcast.create(request.query.site, request.query.message)
+        .then(function(id) {
+            console.log("ID = ", id);
+        });
+
     response.sendStatus(200);
 });
 
