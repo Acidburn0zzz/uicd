@@ -34,9 +34,9 @@ app.post("/broadcasts", function(request, response) {
 
     var broadcast = new Broadcast();
     broadcast.create(request.query.site, request.query.message)
-        .then(function(bid) {
+        .then(function(broadcastId) {
             db.get('ibp')
-                .push({ iid: request.query.iid, bid: bid })
+                .push({ incidentId: request.query.incidentId, broadcastId: broadcastId })
                 .write();
         });
 
