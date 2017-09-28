@@ -7,6 +7,17 @@ var Broadcast = require('./broadcast')
 
 var app = express();
 
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
+
+const adapter = new FileSync('.data/db.json')
+const db = low(adapter)
+
+// Set some defaults
+// Note: "ibp" is for "Incident Broadcast Pair". Happy to change it to something else. :)
+db.defaults({ ibp: [] })
+    .write();
+
 // http://expressjs.com/en/starter/static-files.html
 app.use(express.static('public'));
 
@@ -22,7 +33,13 @@ app.post("/broadcasts", function(request, response) {
     }
 
     var broadcast = new Broadcast();
-    broadcast.create(request.query.site, request.query.message);
+    broadcast.create(request.query.site, request.query.message)
+        .then(function(broadcastId) {
+            db.get('ibp')
+                .push({ incidentId: request.query.incidentId, broadcastId: broadcastId })
+                .write();
+        });
+
     response.sendStatus(200);
 });
 
@@ -36,6 +53,11 @@ app.get("/incidents", function(request, response) {
         debuglevel: "warn" // Set debug levele: debug, info, warn, error
     });
 
+    function isIncidentOpen(status) {
+        return (status !== 'resolved');
+        // return ((status !== 'resolved') && (status !== 'completed') && (status !== 'postmortem'));
+    }
+
     var printIncidentTitle = function(result) {
         if (result.error != null) {
             console.log("Error: ", result.error);
@@ -43,16 +65,15 @@ app.get("/incidents", function(request, response) {
         var incidents = [];
         if (result.status == "success") {
             for (var i = 0; i < result.data.length; i++) {
-                if (result.data[i].status !== 'resolved') {
+                if (isIncidentOpen(result.data[i].status)) {
                     incidents.push({ name: result.data[i].name, created_at: result.data[i].created_at, updated_at: result.data[i].updated_at  });
                 }
+                response.json(incidents);
             }
-            response.json(incidents);
         }
+
+        statuspage.get("incidents", printIncidentTitle);
     }
-
-    statuspage.get("incidents", printIncidentTitle);
-
 });
 
 app.get("/add", function(request, response){
