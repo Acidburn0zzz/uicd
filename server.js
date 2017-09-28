@@ -67,7 +67,7 @@ app.get("/incidents", function(request, response) {
         if (result.status == "success") {
             for (var i = 0; i < result.data.length; i++) {
                 if (isIncidentOpen(result.data[i].status)) {
-                    incidents.push({ name: result.data[i].name, created_at: result.data[i].created_at, updated_at: result.data[i].updated_at });
+                    incidents.push({ id: result.data[i].id, name: result.data[i].name, created_at: result.data[i].created_at, updated_at: result.data[i].updated_at });
                 }
             }
         }
