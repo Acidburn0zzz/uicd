@@ -59,7 +59,6 @@ app.get("/incidents", function(request, response) {
     }
 
     var printIncidentTitle = function(result) {
-        console.log("In printIncidentTitle()")
         if (result.error != null) {
             console.log("Error: ", result.error);
         }
@@ -70,8 +69,8 @@ app.get("/incidents", function(request, response) {
                     incidents.push({ name: result.data[i].name, created_at: result.data[i].created_at, updated_at: result.data[i].updated_at });
                 }
             }
-            response.json(incidents);
         }
+        response.json(incidents);
     }
 
     statuspage.get("incidents", printIncidentTitle);
