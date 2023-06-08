@@ -13,7 +13,7 @@
     "express": "^4.15.4",
     "lowdb": "^1.0.0",
     "pg": "^7.3.0",
-    "request": "2.82.0",
+    "request": "2.88.2",
     "request-promise": "^4.2.2",
     "statuspage-api": "^0.4.0"
   },
